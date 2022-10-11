@@ -10,7 +10,6 @@ function runExp(TEST_POINT, RUEs_num, DUEs_num, MAX_SERVED, NUM_MSLOT, MAX_POWER
 % e.g. runExp([4, 5], [1, 2], [3, 3], 2, 2, [2, 2], [2:11], "proposed")
     for i = 1:length(SEED)
         for j = 1:length(TEST_POINT)
-            clearvars -except TEST_POINT MAX_SERVED SEED scenario i j NUM_MSLOT MAX_POWER_DUE_RUE;
             if strcmp(scenario, 'equal')
                 equaldivision(DUEs_num(j), RUEs_num(j), SEED(i), MAX_POWER_DUE_RUE);
             end
