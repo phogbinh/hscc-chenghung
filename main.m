@@ -87,7 +87,7 @@ function main(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE)
     profits = zeros([1, NUM_RUE]); % store the total save power for each relay group
     
     for i = 1:NUM_RUE
-        [RUEs(i), copy_DUEmat(i, :), profits(i)] = Exhaustive(RUEs(i), copy_DUEmat(i, :));
+        [RUEs(i), copy_DUEmat(i, :), profits(i)] = Greedy(RUEs(i), copy_DUEmat(i, :));
         members = RUEs(i).getGrpMembers();
         for j = 1:length(members)
             DUE_user{members(j).getId()}(end + 1) = RUEs(i).getId();
@@ -108,11 +108,11 @@ function main(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE)
             comp = profits; % temp profits for RUE without DUEs(i)
             bestId = DUE_user{i}(1);
             copy_RUEs(bestId).rmGrpMember(DUEs(i)); % removed from grpMembers but GrpState is not modified, so it will not be used.
-            [copy_RUEs(bestId), copy_DUEmat2(bestId, :), comp(bestId)] = Exhaustive(copy_RUEs(bestId), copy_DUEmat2(bestId, :));
+            [copy_RUEs(bestId), copy_DUEmat2(bestId, :), comp(bestId)] = Greedy(copy_RUEs(bestId), copy_DUEmat2(bestId, :));
             for j = 2:length(DUE_user{i})
                 tmpId = DUE_user{i}(j);
                 copy_RUEs(tmpId).rmGrpMember(DUEs(i));
-                [copy_RUEs(tmpId), copy_DUEmat2(tmpId, :), comp(tmpId)] = Exhaustive(copy_RUEs(tmpId), copy_DUEmat2(tmpId, :));
+                [copy_RUEs(tmpId), copy_DUEmat2(tmpId, :), comp(tmpId)] = Greedy(copy_RUEs(tmpId), copy_DUEmat2(tmpId, :));
                 if profits(tmpId) + comp(bestId) >= profits(bestId) + comp(tmpId)
                     bestId = tmpId;
                 end
