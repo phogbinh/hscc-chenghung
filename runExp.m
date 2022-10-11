@@ -15,6 +15,9 @@ function runExp(TEST_POINT, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE, SEED, scen
             if strcmp(scenario, 'proposed')
                 main(round(TEST_POINT(j)*3/4), round(TEST_POINT(j)/4), SEED(i), MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE);
             end
+            if strcmp(scenario, 'exhaustive')
+                phogbinh(round(TEST_POINT(j)*3/4), round(TEST_POINT(j)/4), SEED(i), MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE);
+            end
         end
     end
 end
