@@ -72,27 +72,46 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
     % 0. Pre- RB Allocation
     [DUEs, RUEs] = Initialize(DUEs, RUEs, resc_mat);
     
-    % every RUE has its own DUE list: RUE1->list1, RUE2->list2, ...
-    % https://www.mathworks.com/matlabcentral/answers/368376-object-array-modify-properties-of-a-single-element
-    copy_DUEmat = DUE.empty(NUM_RUE, 0);
-    for i = 1:NUM_RUE
-        for j = 1:NUM_DUE
-            copy_DUEmat(i, j) = DUEs(j).copy();
-        end
-    end
     tic;
     % 1. Greedy for every knapsack
+    max_profit = 0;
+    res_RUEs = RUEs.copy();
+    copy_DUEmat = DUE.empty(NUM_DUE, 0);
     DUE_user = cell(1, NUM_DUE); % store id of the RUE that serves DUE i
-    [DUE_user{:}] = deal([]);
-    profits = zeros([1, NUM_RUE]); % store the total save power for each relay group
-    
-    for i = 1:NUM_RUE
-        [RUEs(i), copy_DUEmat(i, :), profits(i)] = Exhaustive(RUEs(i), copy_DUEmat(i, :));
-        members = RUEs(i).getGrpMembers();
-        for j = 1:length(members)
-            DUE_user{members(j).getId()}(end + 1) = RUEs(i).getId();
+    combinations = get_combinations(NUM_RUE, NUM_DUE);
+    for mli = 1:size(combinations, 1)
+        cur_combination = combinations(mli, :);
+        if ~is_feasible(cur_combination, NUM_RUE)
+            continue;
+        end
+        cur_RUEs = RUEs.copy();
+        % every RUE has its own DUE list: RUE1->list1, RUE2->list2, ...
+        % https://www.mathworks.com/matlabcentral/answers/368376-object-array-modify-properties-of-a-single-element
+        cur_DUEmat = DUE.empty(NUM_RUE, 0);
+        for rue_mli = 1:NUM_RUE
+            for due_mli = 1:NUM_DUE
+                cur_DUEmat(rue_mli, due_mli) = DUEs(due_mli).copy();
+            end
+        end
+        cur_DUE_user = cell(1, NUM_DUE);
+        [cur_DUE_user{:}] = deal([]);
+        cur_profit = 0;
+        for rue_mli = 1:NUM_RUE
+            [cur_RUEs(rue_mli), cur_DUEmat(rue_mli, :), profit] = get_profit(cur_RUEs(rue_mli), get_relay_DUEs(rue_mli, cur_DUEmat(rue_mli, :), cur_combination), cur_DUEmat(rue_mli, :));
+            members = cur_RUEs(rue_mli).getGrpMembers();
+            for j = 1:length(members)
+                cur_DUE_user{members(j).getId()}(end + 1) = cur_RUEs(rue_mli).getId();
+            end
+            cur_profit = cur_profit + profit;
+        end
+        if cur_profit > max_profit
+            res_RUEs = cur_RUEs;
+            copy_DUEmat = cur_DUEmat;
+            DUE_user = cur_DUE_user;
+            max_profit = cur_profit;
         end
     end
+    RUEs = res_RUEs;
 
     % 2. Check duplicate DUEs
     dup = true;
