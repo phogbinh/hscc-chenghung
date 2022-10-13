@@ -102,6 +102,26 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
             for j = 1:length(members)
                 cur_DUE_user{members(j).getId()}(end + 1) = cur_RUEs(rue_mli).getId();
             end
+            if length(members) == 0
+              fprintf('no relaying members\n')
+              profit = 0;
+              cur_RUEs(rue_mli).clearGrpResource();
+              rbs = cur_RUEs(rue_mli).getPreResource();
+              for i = 1:length(rbs)
+                  nslot = length(rbs(i).tslot) / NUM_MINI_SLOT;
+                  for idx_symbol = 1:NUM_MINI_SLOT
+                      r = Resource();
+                      slots = [(rbs(i).tslot(1) + (idx_symbol - 1) * nslot):(rbs(i).tslot(1) + idx_symbol * nslot - 1)];
+                      r.init(rbs(i).id, idx_symbol, ... 
+                          rbs(i).numerology, ...
+                          rbs(i).bandwidth, ...
+                          rbs(i).duration/NUM_MINI_SLOT, ...
+                          true, rbs(i).tx_power);
+                      r.setSlot(slots);
+                      cur_RUEs(rue_mli).addGrpResource(r);
+                  end
+              end
+            end
             cur_profit = cur_profit + profit;
         end
         if cur_profit > max_profit
