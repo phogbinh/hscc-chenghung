@@ -74,7 +74,7 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
     
     tic;
     % 1. Greedy for every knapsack
-    max_profit = 0;
+    max_profit = -1;
     res_RUEs = RUEs.copy();
     copy_DUEmat = DUE.empty(NUM_DUE, 0);
     DUE_user = cell(1, NUM_DUE); % store id of the RUE that serves DUE i
@@ -112,6 +112,7 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
         end
     end
     RUEs = res_RUEs;
+    assert(max_profit >= 0);
 
     % 2. Check duplicate DUEs
     dup = true;
