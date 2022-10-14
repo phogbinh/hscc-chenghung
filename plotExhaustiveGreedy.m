@@ -56,8 +56,8 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
 
     x = [4, 5];
     xtick = [4:1:5];
-    color = ['m', 'b', 'c'];
-    marker = ['+', 'o', 'd'];
+    color = ['m', 'b'];
+    marker = ['+', 'o'];
 
     figure();
     for i = 1:NUM_LINE
