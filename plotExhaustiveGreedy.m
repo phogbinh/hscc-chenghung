@@ -9,9 +9,9 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
 
     num_case = zeros([NUM_LINE, NUM_POINT]);
     
-    files = dir('./data/diffUE/*.json');
+    files = dir('./data/exhaustiveGreedy/*.json');
     for i = 1:length(files)
-        filename = sprintf('./data/diffUE/%s', files(i).name);
+        filename = sprintf('./data/exhaustiveGreedy/%s', files(i).name);
         str = fileread(filename);
         data = jsondecode(str);
         line = 0;
