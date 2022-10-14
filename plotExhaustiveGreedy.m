@@ -45,14 +45,6 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     real_sys_energy = real_sys_energy./num_case;
     real_avg_energy = real_avg_energy./num_case;
     ee = ee./num_case;
-    
-    real_sys_energy_improvement = zeros([NUM_LINE - 1, NUM_POINT]);
-    for i = 2:NUM_LINE
-        for p = 1:NUM_POINT
-            real_sys_energy_improvement(i - 1, p) = real_sys_energy_improvement(i - 1, p) + ...
-                                                (real_sys_energy(1, p) - real_sys_energy(i, p))/real_sys_energy(1, p);
-        end
-    end
 
     x = [4, 5];
     xtick = [4:1:5];
