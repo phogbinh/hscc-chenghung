@@ -1,5 +1,5 @@
 function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
-% plotExhaustiveGreedy(2, 2)
+% plotExhaustiveGreedy(2, 5)
     sys_capacity = zeros([NUM_LINE, NUM_POINT]);
     approxi_sys_energy = zeros([NUM_LINE, NUM_POINT]);
     approxi_avg_energy = zeros([NUM_LINE, NUM_POINT]);
@@ -28,6 +28,12 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
                 point = 1;
             case 5
                 point = 2;
+            case 6
+                point = 3;
+            case 7
+                point = 4;
+            case 8
+                point = 5;
         end
 
         num_case(line, point) = num_case(line, point) + 1;
@@ -46,10 +52,10 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     real_avg_energy = real_avg_energy./num_case;
     ee = ee./num_case;
 
-    x = [4, 5];
-    xtick = [4:1:5];
-    color = ['m', 'b'];
-    marker = ['+', 'o'];
+    x = [4, 5, 6, 7, 8];
+    xtick = [4:1:8];
+    color = ['m', 'b', 'c', 'g', 'r'];
+    marker = ['+', 'o', 'd', 's', '*'];  
 
     figure();
     for i = 1:NUM_LINE
