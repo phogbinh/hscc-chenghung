@@ -3,6 +3,7 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     sys_capacity = zeros([NUM_LINE, NUM_POINT]);
     approxi_sys_energy = zeros([NUM_LINE, NUM_POINT]);
     approxi_avg_energy = zeros([NUM_LINE, NUM_POINT]);
+    time = zeros([NUM_LINE, NUM_POINT]);
 
     num_case = zeros([NUM_LINE, NUM_POINT]);
     
@@ -37,11 +38,13 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
         sys_capacity(line, point) = sys_capacity(line, point) + data.sum_rate;
         approxi_sys_energy(line, point) = approxi_sys_energy(line, point) + data.sys_energy;
         approxi_avg_energy(line, point) = approxi_avg_energy(line, point) + data.avg_energy*data.NUM_RUE;
+        time(line, point) = time(line, point) + data.time;
     end
     
     sys_capacity = sys_capacity./num_case./1e6;
     approxi_sys_energy = approxi_sys_energy./num_case;
     approxi_avg_energy = approxi_avg_energy./num_case;
+    time = time./num_case;
 
     x = [4, 5, 6, 7, 8];
     xtick = [4:1:8];
@@ -89,6 +92,20 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     ylabel('Sum Energy Consumption of RUEs(\muJ)','FontSize',14);
     legend('Exhaustive (\Delta = 2)', 'JRRP (\Delta = 2)', 'Location', 'northwest');
     saveas(gcf, './pictures/avg_energy.png');
+    
+    figure();
+    for i = 1:NUM_LINE
+        hold on;
+        y = time(i, :);
+        plot(x, y, 'Color', color(i), 'Marker', marker(i), 'LineWidth', 1);
+        hold off;
+    end
+    set(gca, 'XTickMode', 'manual', 'XTick', xtick);
+    grid on;
+    xlabel('Number of UEs','FontSize',14);
+    ylabel('Execution Time(s)','FontSize',14);
+    legend('Exhaustive (\Delta = 2)', 'JRRP (\Delta = 2)', 'Location', 'northwest');
+    saveas(gcf, './pictures/time.png');
 
 %     figure();
 %     for i = 1:NUM_LINE
