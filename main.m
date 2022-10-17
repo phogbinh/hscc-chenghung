@@ -71,7 +71,9 @@ function main(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE)
 
     % 0. Pre- RB Allocation
     [DUEs, RUEs] = Initialize(DUEs, RUEs, resc_mat);
-    
+    backup_RUEs = RUEs.copy();
+    backup_DUEs = DUEs.copy();
+
     % every RUE has its own DUE list: RUE1->list1, RUE2->list2, ...
     % https://www.mathworks.com/matlabcentral/answers/368376-object-array-modify-properties-of-a-single-element
     copy_DUEmat = DUE.empty(NUM_RUE, 0);
@@ -152,6 +154,50 @@ function main(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE)
             end
         end
     end
+
+    copy_DUEmat = DUE.empty(NUM_RUE, 0);
+    for rue_mli = 1:NUM_RUE
+        for due_mli = 1:NUM_DUE
+            copy_DUEmat(rue_mli, due_mli) = DUEs(due_mli).copy();
+        end
+    end
+    DUE_user = cell(1, NUM_DUE);
+    [DUE_user{:}] = deal([]);
+    cur_profit = 0;
+    for rue_mli = 1:NUM_RUE
+        relay_DUEs = DUE.empty(1, 0);
+        members = RUEs(rue_mli).getGrpMembers();
+        for j = 1:length(members)
+            relay_DUEs(end + 1) = backup_DUEs(members(j).getId());
+        end
+        [backup_RUEs(rue_mli), copy_DUEmat(rue_mli, :), profit] = get_profit(backup_RUEs(rue_mli), relay_DUEs, copy_DUEmat(rue_mli, :));
+        members = backup_RUEs(rue_mli).getGrpMembers();
+        for j = 1:length(members)
+            DUE_user{members(j).getId()}(end + 1) = backup_RUEs(rue_mli).getId();
+        end
+        if length(members) == 0
+            profit = 0;
+            backup_RUEs(rue_mli).clearGrpResource();
+            rbs = backup_RUEs(rue_mli).getPreResource();
+            for i = 1:length(rbs)
+                nslot = length(rbs(i).tslot) / NUM_MINI_SLOT;
+                for idx_symbol = 1:NUM_MINI_SLOT
+                    r = Resource();
+                    slots = [(rbs(i).tslot(1) + (idx_symbol - 1) * nslot):(rbs(i).tslot(1) + idx_symbol * nslot - 1)];
+                    r.init(rbs(i).id, idx_symbol, ... 
+                        rbs(i).numerology, ...
+                        rbs(i).bandwidth, ...
+                        rbs(i).duration/NUM_MINI_SLOT, ...
+                        true, rbs(i).tx_power);
+                    r.setSlot(slots);
+                    backup_RUEs(rue_mli).addGrpResource(r);
+                end
+            end
+        end
+        cur_profit = cur_profit + profit;
+    end
+    RUEs = backup_RUEs;
+    fprintf("proposed profit: %.2f\n", cur_profit);
 
     % Assign updated DUEs according to the GrpMembers of each RUE
     for i = 1:NUM_RUE
