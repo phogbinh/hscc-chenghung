@@ -3,9 +3,6 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     sys_capacity = zeros([NUM_LINE, NUM_POINT]);
     approxi_sys_energy = zeros([NUM_LINE, NUM_POINT]);
     approxi_avg_energy = zeros([NUM_LINE, NUM_POINT]);
-    real_sys_energy = zeros([NUM_LINE, NUM_POINT]);
-    real_avg_energy = zeros([NUM_LINE, NUM_POINT]);
-    ee = zeros([NUM_LINE, NUM_POINT]);
 
     num_case = zeros([NUM_LINE, NUM_POINT]);
     
@@ -40,17 +37,11 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
         sys_capacity(line, point) = sys_capacity(line, point) + data.sum_rate;
         approxi_sys_energy(line, point) = approxi_sys_energy(line, point) + data.sys_energy;
         approxi_avg_energy(line, point) = approxi_avg_energy(line, point) + data.avg_energy*data.NUM_RUE;
-        real_sys_energy(line, point) = real_sys_energy(line, point) + data.model_sys_energy;
-        real_avg_energy(line, point) = real_avg_energy(line, point) + data.model_avg_energy;
-        ee(line, point) = ee(line, point) + data.EE;
     end
     
     sys_capacity = sys_capacity./num_case./1e6;
     approxi_sys_energy = approxi_sys_energy./num_case;
     approxi_avg_energy = approxi_avg_energy./num_case;
-    real_sys_energy = real_sys_energy./num_case;
-    real_avg_energy = real_avg_energy./num_case;
-    ee = ee./num_case;
 
     x = [4, 5, 6, 7, 8];
     xtick = [4:1:8];
