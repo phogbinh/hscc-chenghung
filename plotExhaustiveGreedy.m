@@ -76,7 +76,7 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     grid on;
     xlabel('Number of UEs','FontSize',14);
     ylabel('System Energy Consumption (\muJ)','FontSize',14);
-    legend('Exhaustive (\Delta = 2)', 'JRRP (\Delta = 2)', 'Location', 'best');
+    legend('Exhaustive (\Delta = 2)', 'JRRP (\Delta = 2)', 'Location', 'northwest');
     saveas(gcf, './pictures/sys_energy.png');
 
     figure();
