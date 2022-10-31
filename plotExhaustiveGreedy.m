@@ -49,7 +49,11 @@ function plotExhaustiveGreedy(NUM_LINE, NUM_POINT)
     x = [4, 5, 6, 7, 8];
     xtick = [4:1:8];
     color = ['m', 'b', 'c', 'g', 'r'];
-    marker = ['+', 'o', 'd', 's', '*'];  
+    marker = ['+', 'o', 'd', 's', '*'];
+
+    for i = 1:NUM_POINT
+        fprintf("%d UE: %.2f\n", x(i), time(1, i) / time(2, i))
+    end
 
     figure();
     for i = 1:NUM_LINE
