@@ -132,7 +132,7 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
         end
     end
     RUEs = res_RUEs;
-    fprintf("exhaustive profit: %.2f\n", max_profit);
+    fprintf("exhaustive profit: %.2f\n", max_profit)
     assert(max_profit >= 0);
 
     % 2. Check duplicate DUEs

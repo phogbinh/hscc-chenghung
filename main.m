@@ -197,7 +197,7 @@ function main(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_RUE)
         cur_profit = cur_profit + profit;
     end
     RUEs = backup_RUEs;
-    fprintf("proposed profit: %.2f\n", cur_profit);
+    fprintf("proposed profit: %.2f\n", cur_profit)
 
     % Assign updated DUEs according to the GrpMembers of each RUE
     for i = 1:NUM_RUE
