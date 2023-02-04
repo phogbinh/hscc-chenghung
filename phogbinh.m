@@ -97,32 +97,52 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
         [cur_DUE_user{:}] = deal([]);
         cur_profit = 0;
         for rue_mli = 1:NUM_RUE
-            [cur_RUEs(rue_mli), cur_DUEmat(rue_mli, :), profit] = get_profit(cur_RUEs(rue_mli), get_relay_DUEs(rue_mli, cur_DUEmat(rue_mli, :), cur_combination), cur_DUEmat(rue_mli, :));
-            members = cur_RUEs(rue_mli).getGrpMembers();
-            for j = 1:length(members)
-                cur_DUE_user{members(j).getId()}(end + 1) = cur_RUEs(rue_mli).getId();
-            end
-            if length(members) == 0
-              fprintf('no relaying members\n')
-              profit = 0;
-              cur_RUEs(rue_mli).clearGrpResource();
-              rbs = cur_RUEs(rue_mli).getPreResource();
-              for i = 1:length(rbs)
-                  nslot = length(rbs(i).tslot) / NUM_MINI_SLOT;
-                  for idx_symbol = 1:NUM_MINI_SLOT
-                      r = Resource();
-                      slots = [(rbs(i).tslot(1) + (idx_symbol - 1) * nslot):(rbs(i).tslot(1) + idx_symbol * nslot - 1)];
-                      r.init(rbs(i).id, idx_symbol, ... 
-                          rbs(i).numerology, ...
-                          rbs(i).bandwidth, ...
-                          rbs(i).duration/NUM_MINI_SLOT, ...
-                          true, rbs(i).tx_power);
-                      r.setSlot(slots);
-                      cur_RUEs(rue_mli).addGrpResource(r);
-                  end
+            relay_DUEs = get_relay_DUEs(rue_mli, cur_DUEmat(rue_mli, :), cur_combination);
+            permutations = perms(relay_DUEs);
+            rue_best_profit = 0;
+            rue_best_cur_RUEs = cur_RUEs.copy();
+            rue_best_cur_DUEmat = cur_DUEmat.copy();
+            rue_best_cur_DUE_user = cur_DUE_user;
+            for perm_mli = 1:size(permutations, 1)
+              perm_RUEs = cur_RUEs.copy();
+              perm_DUEmat = cur_DUEmat.copy();
+              perm_DUE_user = cur_DUE_user;
+              [perm_RUEs(rue_mli), perm_DUEmat(rue_mli, :), perm_profit] = get_profit(perm_RUEs(rue_mli), permutations(perm_mli, :), perm_DUEmat(rue_mli, :));
+              members = perm_RUEs(rue_mli).getGrpMembers();
+              for j = 1:length(members)
+                  perm_DUE_user{members(j).getId()}(end + 1) = perm_RUEs(rue_mli).getId();
+              end
+              if length(members) == 0
+                fprintf('no relaying members\n')
+                perm_profit = 0;
+                perm_RUEs(rue_mli).clearGrpResource();
+                rbs = perm_RUEs(rue_mli).getPreResource();
+                for i = 1:length(rbs)
+                    nslot = length(rbs(i).tslot) / NUM_MINI_SLOT;
+                    for idx_symbol = 1:NUM_MINI_SLOT
+                        r = Resource();
+                        slots = [(rbs(i).tslot(1) + (idx_symbol - 1) * nslot):(rbs(i).tslot(1) + idx_symbol * nslot - 1)];
+                        r.init(rbs(i).id, idx_symbol, ... 
+                            rbs(i).numerology, ...
+                            rbs(i).bandwidth, ...
+                            rbs(i).duration/NUM_MINI_SLOT, ...
+                            true, rbs(i).tx_power);
+                        r.setSlot(slots);
+                        perm_RUEs(rue_mli).addGrpResource(r);
+                    end
+                end
+              end
+              if perm_profit > rue_best_profit
+                  rue_best_profit = perm_profit;
+                  rue_best_cur_RUEs = perm_RUEs;
+                  rue_best_cur_DUEmat = perm_DUEmat;
+                  rue_best_cur_DUE_user = perm_DUE_user;
               end
             end
-            cur_profit = cur_profit + profit;
+            cur_RUEs = rue_best_cur_RUEs;
+            cur_DUEmat = rue_best_cur_DUEmat;
+            cur_DUE_user = rue_best_cur_DUE_user;
+            cur_profit = cur_profit + rue_best_profit;
         end
         if cur_profit > max_profit
             res_RUEs = cur_RUEs;
