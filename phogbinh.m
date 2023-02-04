@@ -99,7 +99,7 @@ function phogbinh(NUM_DUE, NUM_RUE, SEED, MAX_SERVED, NUM_MSLOT, MAX_POWER_DUE_R
         for rue_mli = 1:NUM_RUE
             relay_DUEs = get_relay_DUEs(rue_mli, cur_DUEmat(rue_mli, :), cur_combination);
             permutations = perms(relay_DUEs);
-            rue_best_profit = 0;
+            rue_best_profit = -1;
             rue_best_cur_RUEs = cur_RUEs.copy();
             rue_best_cur_DUEmat = cur_DUEmat.copy();
             rue_best_cur_DUE_user = cur_DUE_user;
